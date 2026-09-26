@@ -1,3 +1,7 @@
+```md
+```md
+```md
+```md
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -287,14 +291,10 @@
     <script>
         /* 
          * =====================================================================
-         * הגדרות התחברות לגוגל
-         * 1. היכנס ל- Google Cloud Console
-         * 2. צור OAuth Client ID (Web Application)
-         * 3. הוסף את הכתובת של האתר (GitHub Pages / localhost)
-         * 4. העתק את ה-Client ID לתוך המחרוזת כאן למטה:
+         * הגדרות התחברות לגוגל (הוכנס ה-Client ID שלך בהצלחה!)
          * =====================================================================
          */
-        const CLIENT_ID = "530200997804-cue47dkufp4f4cmnk1m6c2a9ouqbks9n.apps.googleusercontent.com'
+        const CLIENT_ID = "530200997804-cue47dkufp4f4cmnk1m6c2a9ouqbks9n.apps.googleusercontent.com";
         
         let tokenClient;
         let accessToken = null;
@@ -452,14 +452,13 @@
                         });
                     } catch (e) {
                         console.error(e);
-                        showToast('שגיאה בטעינת שירותי גוגל. ודא שהגדרת Client ID תקין.', 'error');
+                        showToast('שגיאה בטעינת שירותי גוגל. ודא שאתה מחובר לאינטרנט.', 'error');
                         btn.innerHTML = '<i class="fa-brands fa-google text-[10px]"></i> התחבר';
                         return;
                     }
                 }
                 tokenClient.requestAccessToken();
             } else {
-                // הדמיה (Mock) כאשר לא הוגדר Client ID
                 simulateSync();
             }
         }
@@ -477,20 +476,12 @@
                 });
                 const calData = await calRes.json();
                 
-                // 2. הבאת כותרות מיילים (סימולציה של חילוץ כרטיסי טיסה)
-                const mailRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?q="flight" OR "טיסה" OR "מלון"&maxResults=5`, {
-                    headers: { Authorization: `Bearer ${accessToken}` }
-                });
-                const mailData = await mailRes.json();
-                
-                // עיבוד התוצאות לתוך תבנית האפליקציה
-                let realData = generateMockData(); // נטען נתוני בסיס ונדרוס את היומן
+                let realData = generateMockData();
                 
                 if (calData.items && calData.items.length > 0) {
                     realData.itinerary = parseCalendarEvents(calData.items);
                 }
 
-                // שמירה והצגה
                 appState.data = realData;
                 if (appState.destinations.length === 0) appState.destinations = ["יעד ראשון (ניתן לעריכה)"];
                 appState.lastSync = new Date().toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'}) + ' ' + new Date().toLocaleDateString('he-IL');
@@ -536,7 +527,6 @@
         }
 
         function simulateSync() {
-            showToast('לא הוגדר Google Client ID - נטענים נתוני הדגמה.', 'info');
             const btn = document.getElementById('sync-btn');
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> מכין נתונים...';
             
@@ -873,4 +863,4 @@
 
     </script>
 </body>
-</html>
+</html>````````````
