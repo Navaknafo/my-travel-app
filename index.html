@@ -2,103 +2,141 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- הגדרות תצוגה מותאמות אישית למובייל, כולל התעלמות משוליים בטוחים במידת הצורך (viewport-fit=cover) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- תגיות מיוחדות להפיכת האתר לאפליקציית מובייל (PWA) -->
+    <!-- תגיות PWA להפיכת האתר לאפליקציה -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="הטיול שלי">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#ffffff">
     
-    <!-- מניפסט פנימי המאפשר התקנה כאפליקציה למסך הבית -->
-    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22%D7%94%D7%98%D7%99%D7%95%D7%9C%20%D7%A9%D7%9C%D7%99%22%2C%22short_name%22%3A%22%D7%94%D7%98%D7%99%D7%95%D7%9C%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f3f4f6%22%2C%22theme_color%22%3A%22%232563eb%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F3135%2F3135715.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22%D7%94%D7%98%D7%99%D7%95%D7%9C%20%D7%A9%D7%9C%D7%99%22%2C%22short_name%22%3A%22%D7%94%D7%98%D7%99%D7%95%D7%9C%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%232563eb%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F3135%2F3135715.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
     
-    <title>עוזר טיולים חכם - גיל הזהב</title>
+    <title>הטיול שלי - עוזר חכם</title>
 
-    <!-- Tailwind CSS לעיצוב רספונסיבי ומהיר -->
+    <!-- שילוב ספריות גוגל עבור התחברות וקריאת נתונים -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <!-- Tailwind CSS לעיצוב מודרני -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome לאייקונים ברורים -->
+    <!-- Font Awesome לאייקונים -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap');
+        /* ייבוא פונט גוגל מודרני וקריא במיוחד */
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap');
         
         body {
-            font-family: 'Assistant', sans-serif;
-            background-color: #f3f4f6; /* אפור בהיר ונעים לעין */
-            /* טיפול בשוליים במכשירי אייפון חדשים */
-            padding-bottom: env(safe-area-inset-bottom);
+            font-family: 'Heebo', sans-serif;
+            background-color: #f8fafc; /* רקע בהיר ונקי (slate-50) */
+            /* טיפול בשוליים התחתונים באייפון כדי שהתוכן לא יוסתר */
+            padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+            -webkit-tap-highlight-color: transparent; /* מניעת ריבוע כחול בלחיצה במובייל */
         }
         
-        /* הסתרת פס הגלילה למראה של אפליקציה */
-        ::-webkit-scrollbar {
-            display: none;
-        }
+        /* הסתרת פסי גלילה לתחושה של אפליקציה טבעית */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         .tab-content {
             display: none;
-            padding-bottom: 100px; /* מקום לתפריט התחתון */
+            animation: fadeIn 0.4s ease-out;
         }
         .tab-content.active {
             display: block;
         }
         
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* עיצוב בר הניווט התחתון */
+        .nav-item {
+            flex: 0 0 auto;
+            width: 25%; /* מציג 4 פריטים במקביל בערך */
+            min-width: 70px;
+            transition: all 0.3s ease;
+        }
         .nav-item.active {
-            color: #2563eb; /* כחול בולט */
+            transform: scale(1.1);
+        }
+        .nav-item.active i {
+            color: #2563eb; /* כחול בולט לאלמנט פעיל */
+        }
+        .nav-item.active span {
+            color: #1e293b; /* כהה לטקסט פעיל */
             font-weight: 800;
         }
 
-        .offline-banner {
-            display: none;
-            background-color: #ef4444; /* אדום התראה */
-            color: white;
-            text-align: center;
-            padding: 8px;
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-        body.is-offline .offline-banner {
-            display: block;
-        }
-
-        /* באנר הדרכה להתקנה ממסך הבית */
-        #install-banner {
-            display: none;
-        }
-
-        /* עיצוב הצ'קבוקס (רשימת ציוד) שיהיה גדול ונוח ללחיצה */
+        /* עיצוב תיבות סימון אינטראקטיביות (צ'קבוקסים) */
         input[type="checkbox"] {
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
+            accent-color: #10b981; /* צבע אמרלד יפה */
             cursor: pointer;
         }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="text-slate-800 selection:bg-blue-200">
 
-    <div class="offline-banner">
-        <i class="fas fa-wifi-slash mr-2"></i> אין חיבור אינטרנט. מציג נתונים שמורים מראש.
+    <!-- מערכת הודעות מתפרצות (Toast) במקום alert -->
+    <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 pointer-events-none transition-opacity duration-300 z-[100] flex items-center gap-3 w-11/12 max-w-sm">
+        <span id="toast-icon"></span>
+        <span id="toast-msg" class="font-medium text-sm"></span>
     </div>
 
-    <div id="install-banner" class="bg-blue-100 border-b-2 border-blue-500 p-4 shadow-md mb-2">
-        <div class="flex items-center justify-between">
-            <div>
-                <h3 class="font-bold text-blue-800 text-lg">התקן כאפליקציה!</h3>
-                <p class="text-blue-700 text-base">לשימוש קל יותר וללא אינטרנט, הוסף למסך הבית.</p>
-                <p id="install-instruction" class="text-sm font-semibold mt-1 text-gray-700"></p>
+    <!-- חלון אישור (Confirm) מודרני במקום confirm של הדפדפן -->
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-5">
+        <div class="bg-white rounded-[2rem] p-6 w-full max-w-sm shadow-2xl scale-95 opacity-0 transition-all duration-300" id="confirm-box">
+            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
-            <button onclick="document.getElementById('install-banner').style.display='none'" class="text-blue-800 text-2xl font-bold p-2">&times;</button>
+            <h3 class="text-2xl font-extrabold text-center text-slate-800 mb-2" id="confirm-title">אישור פעולה</h3>
+            <p class="text-slate-500 text-center text-lg mb-8" id="confirm-desc">האם אתה בטוח?</p>
+            <div class="flex gap-4">
+                <button id="confirm-cancel" class="flex-1 bg-slate-100 text-slate-600 hover:bg-slate-200 py-4 rounded-2xl font-bold text-lg transition">ביטול</button>
+                <button id="confirm-ok" class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-red-200 hover:bg-red-600 transition">מחק</button>
+            </div>
         </div>
     </div>
 
-    <header class="bg-blue-600 text-white p-5 shadow-lg sticky top-0 z-10 flex justify-between items-center">
-        <div>
-            <h1 class="text-2xl font-bold">הטיול שלי <i class="fas fa-plane-departure ml-2"></i></h1>
-            <p id="last-sync-time" class="text-sm opacity-80 mt-1">טרם סונכרן</p>
+    <!-- חלון קלט (Prompt) מודרני במקום prompt של הדפדפן -->
+    <div id="prompt-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-5">
+        <div class="bg-white rounded-[2rem] p-6 w-full max-w-sm shadow-2xl scale-95 opacity-0 transition-all duration-300" id="prompt-box">
+            <h3 class="text-2xl font-extrabold text-slate-800 mb-2" id="prompt-title">הוספת פריט</h3>
+            <p class="text-slate-500 mb-6 text-sm">הכנס את הפרטים החדשים למטה.</p>
+            <input type="text" id="prompt-input" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-lg mb-8 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition" placeholder="...">
+            <div class="flex gap-4">
+                <button id="prompt-cancel" class="flex-1 bg-slate-100 text-slate-600 hover:bg-slate-200 py-4 rounded-2xl font-bold text-lg transition">ביטול</button>
+                <button id="prompt-ok" class="flex-1 bg-blue-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-200 hover:bg-blue-700 transition">הוסף</button>
+            </div>
         </div>
-        <button id="sync-btn" onclick="syncData()" class="bg-white text-blue-600 px-6 py-3 rounded-xl font-bold text-lg shadow-md active:bg-gray-200">
-            <i class="fas fa-sync-alt ml-1"></i> סנכרן 
+    </div>
+
+    <!-- התראת חוסר באינטרנט -->
+    <div id="offline-banner" class="hidden bg-rose-500 text-white text-center py-2 text-sm font-bold shadow-md relative z-50">
+        <i class="fas fa-wifi-slash ml-2"></i> עובד במצב לא מקוון (אופליין)
+    </div>
+
+    <!-- כותרת עליונה צפה עם אפקט זכוכית (Glassmorphism) -->
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-5 py-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-4">
+            <!-- לוגו מטוס מודרני -->
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-200">
+                <i class="fa-solid fa-plane-up text-xl transform rotate-12"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">הטיול שלי</h1>
+                <p id="sync-status" class="text-xs font-medium text-slate-500 mt-0.5">מחכה לסנכרון...</p>
+            </div>
+        </div>
+        <!-- כפתור חיבור לגוגל -->
+        <button onclick="onSyncClicked()" id="sync-btn" class="bg-slate-900 text-white px-5 py-2.5 rounded-full font-bold text-sm shadow-md hover:bg-slate-800 transition-all flex items-center gap-2 active:scale-95">
+            <i class="fa-brands fa-google text-[10px]"></i> התחבר 
         </button>
     </header>
 
@@ -106,140 +144,162 @@
         
         <!-- לשונית: לוגיסטיקה -->
         <section id="tab-logistics" class="tab-content active">
-            <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 border-blue-500 pb-2">לוגיסטיקה ומידע</h2>
+            <h2 class="text-3xl font-extrabold mb-6 text-slate-800">מידע לוגיסטי</h2>
             
-            <div class="bg-yellow-100 border-r-4 border-yellow-500 p-4 rounded-lg shadow-sm mb-6">
-                <h3 class="text-xl font-bold text-yellow-800 mb-2"><i class="fas fa-lightbulb"></i> טיפ חכם: ניווט ללא אינטרנט</h3>
-                <p class="text-lg text-yellow-900 mb-3">מומלץ להוריד את מפת היעד מראש כדי שהניווט יעבוד גם כשאין קליטה.</p>
-                <ol class="list-decimal list-inside text-yellow-900 text-base space-y-1">
-                    <li>כנסו לאפליקציית מפות גוגל</li>
-                    <li>חפשו את שם העיר (למשל: לונדון)</li>
-                    <li>לחצו על שם העיר למטה, ואז על הלחצן "הורדה" (Download)</li>
-                </ol>
+            <div class="bg-amber-50 border border-amber-200 p-5 rounded-[2rem] shadow-sm mb-6 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-16 h-16 bg-amber-200 rounded-full opacity-50 blur-xl"></div>
+                <h3 class="text-lg font-bold text-amber-800 mb-2 relative z-10"><i class="fas fa-map text-amber-600 ml-1"></i> טיפ: ניווט אופליין</h3>
+                <p class="text-sm text-amber-900 mb-1 relative z-10">ב-Google Maps, חפש את העיר, לחץ עליה ולחץ על <strong>הורדה (Download)</strong> לשימוש ללא אינטרנט.</p>
             </div>
 
-            <!-- אזור יעדים אישיים -->
-            <div class="bg-white p-5 rounded-2xl shadow-md mb-6 border-2 border-indigo-100">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-2xl font-bold text-indigo-700"><i class="fas fa-map-marked-alt text-indigo-500 ml-2"></i> היעדים שלי</h3>
-                    <button onclick="addDestination()" class="bg-indigo-100 text-indigo-700 p-2 rounded-lg font-bold">
-                        <i class="fas fa-plus"></i> הוסף יעד
+            <!-- יעדים אישיים (מודרני) -->
+            <div class="bg-white p-6 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 mb-6">
+                <div class="flex justify-between items-center mb-5">
+                    <h3 class="text-xl font-extrabold text-slate-800"><i class="fas fa-map-pin text-blue-500 ml-2"></i> היעדים שלנו</h3>
+                    <button onclick="addDestinationUI()" class="bg-blue-50 text-blue-600 w-10 h-10 rounded-full font-bold hover:bg-blue-100 transition flex items-center justify-center">
+                        <i class="fas fa-plus"></i>
                     </button>
                 </div>
-                <div id="destinations-container" class="space-y-3">
-                    <!-- יעדים יתווספו לכאן דינמית -->
-                    <p class="text-gray-500 text-lg text-center p-3" id="no-destinations-msg">לחץ על 'סנכרן' כדי לטעון יעדים או הוסף יעד בעצמך.</p>
+                <div id="destinations-container" class="flex flex-col gap-3">
+                    <p class="text-slate-400 text-center py-4">אין יעדים. לחץ על הוסף יעד.</p>
                 </div>
             </div>
 
-            <div id="logistics-content" class="space-y-5">
-                <p class="text-center text-xl text-gray-500 my-10">לחץ על כפתור "סנכרן" כדי למשוך את נתוני הטיול שלך.</p>
+            <div id="logistics-content" class="space-y-6">
+                <div class="bg-white rounded-[2rem] p-8 text-center border border-slate-100 shadow-sm">
+                    <div class="text-5xl text-slate-200 mb-4"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+                    <p class="text-lg text-slate-500 font-medium">לחץ על "התחבר" למעלה כדי למשוך את נתוני הטיסות והמלונות שלך מגוגל.</p>
+                </div>
             </div>
         </section>
 
-        <!-- לשונית: תוכנית טיול -->
+        <!-- לשונית: תוכנית טיול (מהיומן) -->
         <section id="tab-itinerary" class="tab-content">
-            <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 border-green-500 pb-2">תוכנית הטיול</h2>
+            <h2 class="text-3xl font-extrabold mb-6 text-slate-800">לוח זמנים</h2>
             <div id="itinerary-content" class="space-y-6">
-                <p class="text-center text-xl text-gray-500 my-10">אין נתונים. סנכרן את האפליקציה.</p>
+                <div class="bg-white rounded-[2rem] p-8 text-center border border-slate-100 shadow-sm">
+                    <div class="text-5xl text-slate-200 mb-4"><i class="fa-regular fa-calendar-days"></i></div>
+                    <p class="text-lg text-slate-500 font-medium">התחבר לגוגל כדי למשוך את הפגישות והאירועים שלך מ-Google Calendar.</p>
+                </div>
             </div>
         </section>
 
         <!-- לשונית: מזג אוויר -->
         <section id="tab-weather" class="tab-content">
-            <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 border-sky-500 pb-2">מזג אוויר ביעד</h2>
-            <div id="weather-content" class="space-y-5">
-                <p class="text-center text-xl text-gray-500 my-10">הנתונים יטענו בעת הסנכרון (דורש אינטרנט בפעם הראשונה).</p>
+            <h2 class="text-3xl font-extrabold mb-6 text-slate-800">מזג אוויר</h2>
+            <div id="weather-content" class="space-y-6">
+                <div class="bg-white rounded-[2rem] p-8 text-center border border-slate-100 shadow-sm">
+                    <div class="text-5xl text-slate-200 mb-4"><i class="fa-solid fa-temperature-half"></i></div>
+                    <p class="text-lg text-slate-500 font-medium">הנתונים יטענו לאחר סנכרון ראשוני עם אינטרנט.</p>
+                </div>
             </div>
         </section>
 
-        <!-- לשונית: אטרקציות -->
+        <!-- לשונית: אטרקציות (Preloaded AI) -->
         <section id="tab-attractions" class="tab-content">
-            <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 border-purple-500 pb-2">אטרקציות והמלצות</h2>
+            <h2 class="text-3xl font-extrabold mb-6 text-slate-800">אטרקציות</h2>
+            <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-[1.5rem] mb-6">
+                <p class="text-sm text-indigo-800 font-medium"><i class="fa-solid fa-wand-magic-sparkles text-indigo-500 ml-1"></i> <strong>המלצות AI:</strong> רשימה זו הוכנה מראש ונשמרת במכשיר לשימוש באופליין.</p>
+            </div>
             <div id="attractions-content" class="space-y-5">
-                <p class="text-center text-xl text-gray-500 my-10">אין נתונים. סנכרן את האפליקציה.</p>
+                <p class="text-center text-slate-400 py-10">סנכרן את האפליקציה.</p>
             </div>
         </section>
 
         <!-- לשונית: מסעדות -->
         <section id="tab-restaurants" class="tab-content">
-            <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 border-orange-500 pb-2">מסעדות באזור</h2>
+            <h2 class="text-3xl font-extrabold mb-6 text-slate-800">קולינריה</h2>
             <div id="restaurants-content" class="space-y-5">
-                <p class="text-center text-xl text-gray-500 my-10">אין נתונים. סנכרן את האפליקציה.</p>
+                <p class="text-center text-slate-400 py-10">סנכרן את האפליקציה.</p>
             </div>
         </section>
 
         <!-- לשונית: ציוד ומזוודה -->
         <section id="tab-packing" class="tab-content">
-            <div class="flex justify-between items-center mb-6 border-b-2 border-teal-500 pb-2">
-                <h2 class="text-3xl font-bold text-gray-800">רשימת אריזה</h2>
-                <button onclick="addCustomItem()" class="bg-teal-100 text-teal-700 px-4 py-2 rounded-xl font-bold text-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-extrabold text-slate-800">רשימת אריזה</h2>
+                <button onclick="addCustomItemUI()" class="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
                     <i class="fas fa-plus"></i> פריט
                 </button>
             </div>
-            <div id="packing-content" class="bg-white p-2 rounded-2xl shadow-md">
-                <p class="text-center text-xl text-gray-500 my-10">סנכרן כדי לקבל המלצות אריזה לטיול שלך.</p>
+            <div id="packing-content" class="bg-white p-4 rounded-[2rem] shadow-[0_4px_20px_rgb(0,0,0,0.02)] border border-slate-100">
+                <p class="text-center text-slate-400 py-10">סנכרן כדי לטעון רשימה.</p>
             </div>
         </section>
 
-        <!-- לשונית: חירום (זמינה תמיד) -->
+        <!-- לשונית: חירום -->
         <section id="tab-emergency" class="tab-content">
-            <h2 class="text-3xl font-bold mb-6 text-red-600 border-b-2 border-red-500 pb-2"><i class="fas fa-ambulance"></i> חירום וביטוח</h2>
+            <h2 class="text-3xl font-extrabold mb-6 text-rose-600">חירום וביטוח</h2>
             
-            <div class="bg-red-50 border-2 border-red-200 p-5 rounded-2xl mb-5">
-                <h3 class="text-2xl font-bold text-red-700 mb-4">מספרי חירום בחו"ל</h3>
-                <div class="space-y-3">
-                    <a href="tel:112" class="block w-full text-center bg-red-600 text-white py-4 rounded-xl font-bold text-2xl shadow-md">
-                        <i class="fas fa-phone-alt"></i> 112 - מוקד חירום כללי (אירופה)
-                    </a>
-                </div>
+            <div class="bg-rose-50 border border-rose-200 p-6 rounded-[2rem] mb-6 relative overflow-hidden">
+                <i class="fa-solid fa-truck-medical absolute -right-6 -bottom-6 text-8xl text-rose-500/10 rotate-[-15deg]"></i>
+                <h3 class="text-2xl font-extrabold text-rose-800 mb-5 relative z-10">מספרי חירום</h3>
+                <a href="tel:112" class="block w-full text-center bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-2xl font-extrabold text-2xl shadow-lg shadow-rose-200 transition-colors relative z-10">
+                    <i class="fas fa-phone-alt ml-2"></i> מוקד 112
+                </a>
+                <p class="text-center text-rose-700 text-sm mt-3 relative z-10">מוקד חירום כללי (אירופה)</p>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-200">
-                <h3 class="text-2xl font-bold text-gray-800 mb-4">ביטוח נסיעות</h3>
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
+                <h3 class="text-2xl font-extrabold text-slate-800 mb-4">ביטוח נסיעות</h3>
                 <div id="insurance-content">
-                    <p class="text-lg text-gray-600">יש לסנכרן מול המייל כדי למשוך פרטי פוליסה.</p>
+                    <p class="text-slate-500">יש לסנכרן מול המייל כדי למשוך פרטי פוליסה.</p>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <nav class="bg-white fixed bottom-0 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] border-t border-gray-200 z-20 pb-[env(safe-area-inset-bottom)]">
-        <ul class="flex justify-around items-center p-2 text-gray-500 text-xs overflow-x-auto">
-            <li class="nav-item active text-center flex-1 py-2 cursor-pointer transition-colors" onclick="switchTab('logistics', this)">
-                <i class="fas fa-plane text-2xl mb-1 block"></i>
-                <span class="text-sm font-semibold">לוגיסטיקה</span>
+    <!-- תפריט ניווט תחתון (Bottom Bar) -->
+    <nav class="fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-slate-200 z-50 pt-2 pb-[calc(env(safe-area-inset-bottom)+10px)]">
+        <ul class="flex justify-start items-center px-2 overflow-x-auto hide-scrollbar snap-x snap-mandatory">
+            <li class="nav-item active snap-center text-center cursor-pointer text-slate-400" onclick="switchTab('logistics', this)">
+                <i class="fas fa-plane-arrival text-2xl mb-1 block transition-colors"></i>
+                <span class="text-[11px] font-semibold block transition-colors">לוגיסטיקה</span>
             </li>
-            <li class="nav-item text-center flex-1 py-2 cursor-pointer transition-colors" onclick="switchTab('itinerary', this)">
-                <i class="far fa-calendar-alt text-2xl mb-1 block"></i>
-                <span class="text-sm font-semibold">לו"ז</span>
+            <li class="nav-item snap-center text-center cursor-pointer text-slate-400" onclick="switchTab('itinerary', this)">
+                <i class="far fa-calendar-alt text-2xl mb-1 block transition-colors"></i>
+                <span class="text-[11px] font-semibold block transition-colors">לו"ז</span>
             </li>
-            <li class="nav-item text-center flex-1 py-2 cursor-pointer transition-colors" onclick="switchTab('weather', this)">
-                <i class="fas fa-cloud-sun text-2xl mb-1 block"></i>
-                <span class="text-sm font-semibold">מזג אוויר</span>
+            <li class="nav-item snap-center text-center cursor-pointer text-slate-400" onclick="switchTab('weather', this)">
+                <i class="fas fa-cloud-sun text-2xl mb-1 block transition-colors"></i>
+                <span class="text-[11px] font-semibold block transition-colors">מזג אוויר</span>
             </li>
-            <li class="nav-item text-center flex-1 py-2 cursor-pointer transition-colors" onclick="switchTab('attractions', this)">
-                <i class="fas fa-map-marked-alt text-2xl mb-1 block"></i>
-                <span class="text-sm font-semibold">אטרקציות</span>
+            <li class="nav-item snap-center text-center cursor-pointer text-slate-400" onclick="switchTab('attractions', this)">
+                <i class="fas fa-camera-retro text-2xl mb-1 block transition-colors"></i>
+                <span class="text-[11px] font-semibold block transition-colors">אטרקציות</span>
             </li>
-            <li class="nav-item text-center flex-1 py-2 cursor-pointer transition-colors" onclick="switchTab('restaurants', this)">
-                <i class="fas fa-utensils text-2xl mb-1 block"></i>
-                <span class="text-sm font-semibold">מסעדות</span>
+            <li class="nav-item snap-center text-center cursor-pointer text-slate-400" onclick="switchTab('restaurants', this)">
+                <i class="fas fa-utensils text-2xl mb-1 block transition-colors"></i>
+                <span class="text-[11px] font-semibold block transition-colors">קולינריה</span>
             </li>
-            <li class="nav-item text-center flex-1 py-2 cursor-pointer transition-colors" onclick="switchTab('packing', this)">
-                <i class="fas fa-suitcase text-2xl mb-1 block"></i>
-                <span class="text-sm font-semibold">ציוד</span>
+            <li class="nav-item snap-center text-center cursor-pointer text-slate-400" onclick="switchTab('packing', this)">
+                <i class="fas fa-suitcase-rolling text-2xl mb-1 block transition-colors"></i>
+                <span class="text-[11px] font-semibold block transition-colors">מזוודה</span>
             </li>
-            <li class="nav-item text-center flex-1 py-2 cursor-pointer transition-colors text-red-500" onclick="switchTab('emergency', this)">
-                <i class="fas fa-briefcase-medical text-2xl mb-1 block"></i>
-                <span class="text-sm font-semibold">חירום</span>
+            <li class="nav-item snap-center text-center cursor-pointer text-slate-400" onclick="switchTab('emergency', this)">
+                <i class="fa-solid fa-kit-medical text-2xl mb-1 block transition-colors"></i>
+                <span class="text-[11px] font-semibold block transition-colors">חירום</span>
             </li>
         </ul>
     </nav>
 
     <script>
-        // ניהול מצב האפליקציה (State) לטובת שמירה באופליין
+        /* 
+         * =====================================================================
+         * הגדרות התחברות לגוגל
+         * 1. היכנס ל- Google Cloud Console
+         * 2. צור OAuth Client ID (Web Application)
+         * 3. הוסף את הכתובת של האתר (GitHub Pages / localhost)
+         * 4. העתק את ה-Client ID לתוך המחרוזת כאן למטה:
+         * =====================================================================
+         */
+        const CLIENT_ID = "370699261855-dsa2vl2qq2ldo54470gup8dd5t750vpn.apps.googleusercontent.com"; // לדוגמה: '123456789-abcdefg.apps.googleusercontent.com'
+        
+        let tokenClient;
+        let accessToken = null;
+
+        // ניהול מצב האפליקציה (שמירה ב-LocalStorage)
         let appState = {
             data: null,
             weatherData: null,
@@ -247,20 +307,82 @@
             lastSync: null,
             packingState: {}
         };
-
-        const STORAGE_KEY = 'travel_companion_data';
+        const STORAGE_KEY = 'modern_travel_app_v2';
 
         function initApp() {
             loadState();
             checkOfflineStatus();
-            checkMobileStandalone();
-            registerServiceWorker();
             
             window.addEventListener('online', checkOfflineStatus);
             window.addEventListener('offline', checkOfflineStatus);
         }
 
-        // ניווט לשוניות
+        // פונקציות להצגת חלונות מותאמים (בלי alert/confirm)
+        function showToast(msg, type='info') {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-msg');
+            const iconEl = document.getElementById('toast-icon');
+            msgEl.innerText = msg;
+            
+            if (type === 'error') {
+                iconEl.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400 text-lg"></i>';
+            } else if (type === 'success') {
+                iconEl.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>';
+            } else {
+                iconEl.innerHTML = '<i class="fa-solid fa-circle-info text-blue-400 text-lg"></i>';
+            }
+            
+            toast.classList.remove('opacity-0');
+            setTimeout(() => toast.classList.add('opacity-0'), 3500);
+        }
+
+        function showConfirm(title, desc, onOk) {
+            const modal = document.getElementById('confirm-modal');
+            const box = document.getElementById('confirm-box');
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-desc').innerText = desc;
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => box.classList.remove('scale-95', 'opacity-0'), 10);
+            
+            document.getElementById('confirm-cancel').onclick = () => {
+                box.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            };
+            document.getElementById('confirm-ok').onclick = () => {
+                box.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+                onOk();
+            };
+        }
+
+        function showPrompt(title, placeholder, onOk) {
+            const modal = document.getElementById('prompt-modal');
+            const box = document.getElementById('prompt-box');
+            const input = document.getElementById('prompt-input');
+            
+            document.getElementById('prompt-title').innerText = title;
+            input.placeholder = placeholder;
+            input.value = '';
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                box.classList.remove('scale-95', 'opacity-0');
+                input.focus();
+            }, 10);
+            
+            document.getElementById('prompt-cancel').onclick = () => {
+                box.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            };
+            document.getElementById('prompt-ok').onclick = () => {
+                const val = input.value.trim();
+                box.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+                if(val) onOk(val);
+            };
+        }
+
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
@@ -268,10 +390,13 @@
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             element.classList.add('active');
             
-            window.scrollTo(0, 0);
+            // גלילה חלקה למעלה של התוכן
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // גלילה חלקה של התפריט התחתון כדי שהפריט יהיה ממורכז
+            element.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
 
-        // מנגנון שמירה וטעינה מהזיכרון המקומי (Offline support)
         function saveState() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
         }
@@ -283,7 +408,7 @@
                 if (appState.data) {
                     renderAllData();
                     if (appState.lastSync) {
-                        document.getElementById('last-sync-time').innerText = 'עודכן לאחרונה: ' + appState.lastSync;
+                        document.getElementById('sync-status').innerText = 'עודכן: ' + appState.lastSync;
                     }
                 }
             }
@@ -291,96 +416,169 @@
 
         function checkOfflineStatus() {
             if (!navigator.onLine) {
-                document.body.classList.add('is-offline');
-                document.getElementById('sync-btn').disabled = true;
-                document.getElementById('sync-btn').classList.add('opacity-50', 'cursor-not-allowed');
+                document.getElementById('offline-banner').classList.remove('hidden');
+                const btn = document.getElementById('sync-btn');
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
             } else {
-                document.body.classList.remove('is-offline');
-                document.getElementById('sync-btn').disabled = false;
-                document.getElementById('sync-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+                document.getElementById('offline-banner').classList.add('hidden');
+                const btn = document.getElementById('sync-btn');
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
             }
         }
 
-        function checkMobileStandalone() {
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            const isAndroid = /android/i.test(navigator.userAgent);
-            
-            if (!isStandalone) {
-                const banner = document.getElementById('install-banner');
-                const instruction = document.getElementById('install-instruction');
-                
-                if (isIOS) {
-                    instruction.innerHTML = 'לחץ על סמל ה<strong>שיתוף</strong> למטה <i class="fas fa-external-link-alt mx-1"></i> ובחר "<strong>הוסף למסך הבית</strong>" <i class="fas fa-plus-square mx-1"></i>';
-                    banner.style.display = 'block';
-                } else if (isAndroid) {
-                    instruction.innerHTML = 'לחץ על תפריט הדפדפן (3 נקודות למעלה) ובחר "<strong>התקן אפליקציה</strong>" או "<strong>הוסף למסך הבית</strong>".';
-                    banner.style.display = 'block';
-                }
-            }
-        }
-
-        // רישום Service Worker לאופליין עמוק
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => console.log('Service Worker נרשם בהצלחה.'))
-                    .catch(error => console.log('הערה: קובץ sw.js חסר או שגיאה ברישום:', error));
-            }
-        }
-
-        async function syncData() {
+        // התחברות לגוגל ומשיכת נתונים
+        function onSyncClicked() {
             const btn = document.getElementById('sync-btn');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin ml-1"></i> מסנכרן...';
+            
+            if (CLIENT_ID && CLIENT_ID.trim() !== "") {
+                btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> מתחבר...';
+                if (!tokenClient) {
+                    try {
+                        tokenClient = google.accounts.oauth2.initTokenClient({
+                            client_id: CLIENT_ID,
+                            scope: 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly',
+                            callback: (response) => {
+                                if (response.error) {
+                                    console.error(response);
+                                    showToast('ההתחברות בוטלה או נכשלה', 'error');
+                                    btn.innerHTML = '<i class="fa-brands fa-google text-[10px]"></i> התחבר';
+                                    return;
+                                }
+                                accessToken = response.access_token;
+                                fetchRealGoogleData();
+                            }
+                        });
+                    } catch (e) {
+                        console.error(e);
+                        showToast('שגיאה בטעינת שירותי גוגל. ודא שהגדרת Client ID תקין.', 'error');
+                        btn.innerHTML = '<i class="fa-brands fa-google text-[10px]"></i> התחבר';
+                        return;
+                    }
+                }
+                tokenClient.requestAccessToken();
+            } else {
+                // הדמיה (Mock) כאשר לא הוגדר Client ID
+                simulateSync();
+            }
+        }
+
+        async function fetchRealGoogleData() {
+            const btn = document.getElementById('sync-btn');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> קורא נתונים...';
             
             try {
-                await fetchWeatherData();
+                // 1. הבאת אירועים מהיומן
+                const timeMin = new Date().toISOString();
+                const timeMax = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+                const calRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`, {
+                    headers: { Authorization: `Bearer ${accessToken}` }
+                });
+                const calData = await calRes.json();
                 
-                // הדמיה של משיכת נתונים משרת/יומן/מייל
-                setTimeout(() => {
-                    const mockData = generateMockData();
-                    appState.data = mockData;
-                    
-                    if (appState.destinations.length === 0) {
-                        appState.destinations = ["לונדון, אנגליה", "אוקספורד (סיור יום)"];
-                    }
+                // 2. הבאת כותרות מיילים (סימולציה של חילוץ כרטיסי טיסה)
+                const mailRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?q="flight" OR "טיסה" OR "מלון"&maxResults=5`, {
+                    headers: { Authorization: `Bearer ${accessToken}` }
+                });
+                const mailData = await mailRes.json();
+                
+                // עיבוד התוצאות לתוך תבנית האפליקציה
+                let realData = generateMockData(); // נטען נתוני בסיס ונדרוס את היומן
+                
+                if (calData.items && calData.items.length > 0) {
+                    realData.itinerary = parseCalendarEvents(calData.items);
+                }
 
-                    // אתחול רשימת ציוד
-                    if (Object.keys(appState.packingState).length === 0) {
-                        appState.data.packingList.forEach(item => {
-                            appState.packingState[item.id] = false;
-                        });
-                    }
-                    
-                    const now = new Date();
-                    appState.lastSync = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute:'2-digit' }) + ' ' + now.toLocaleDateString('he-IL');
-                    
-                    saveState();
-                    renderAllData();
-                    
-                    btn.innerHTML = '<i class="fas fa-check ml-1"></i> עודכן';
-                    document.getElementById('last-sync-time').innerText = 'עודכן לאחרונה: ' + appState.lastSync;
-                    
-                    setTimeout(() => {
-                        btn.innerHTML = '<i class="fas fa-sync-alt ml-1"></i> סנכרן';
-                    }, 2000);
-                }, 1500);
-            } catch (error) {
-                console.error(error);
-                btn.innerHTML = '<i class="fas fa-exclamation-triangle ml-1"></i> שגיאה';
-                alert('שגיאה בסנכרון. נסה שוב.');
+                // שמירה והצגה
+                appState.data = realData;
+                if (appState.destinations.length === 0) appState.destinations = ["יעד ראשון (ניתן לעריכה)"];
+                appState.lastSync = new Date().toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'}) + ' ' + new Date().toLocaleDateString('he-IL');
+                
+                await fetchWeatherData();
+                initPackingState();
+                
+                saveState();
+                renderAllData();
+                
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> סונכרן';
+                showToast('הנתונים סונכרנו בהצלחה מחשבון הגוגל שלך!', 'success');
+                document.getElementById('sync-status').innerText = 'מחובר וסונכרן מול גוגל';
+                
+            } catch (err) {
+                console.error(err);
+                btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> שגיאה';
+                showToast('התרחשה שגיאה בעת קריאת הנתונים', 'error');
+            }
+        }
+
+        function parseCalendarEvents(events) {
+            let map = {};
+            events.forEach(ev => {
+                let dateObj = ev.start.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start.date);
+                let dayStr = dateObj.toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'numeric' });
+                
+                if (!map[dayStr]) map[dayStr] = [];
+                let timeStr = ev.start.dateTime ? dateObj.toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'}) : 'כל היום';
+                
+                map[dayStr].push({
+                    time: timeStr,
+                    desc: ev.summary || 'אירוע',
+                    location: ev.location || ''
+                });
+            });
+            
+            let result = [];
+            for (const [day, dayEvents] of Object.entries(map)) {
+                result.push({ day: day, events: dayEvents });
+            }
+            return result;
+        }
+
+        function simulateSync() {
+            showToast('לא הוגדר Google Client ID - נטענים נתוני הדגמה.', 'info');
+            const btn = document.getElementById('sync-btn');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> מכין נתונים...';
+            
+            setTimeout(() => {
+                appState.data = generateMockData();
+                if (appState.destinations.length === 0) {
+                    appState.destinations = ["לונדון, אנגליה", "אוקספורד (סיור יום)"];
+                }
+                
+                initPackingState();
+                appState.lastSync = new Date().toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'}) + ' ' + new Date().toLocaleDateString('he-IL');
+                
+                saveState();
+                renderAllData();
+                fetchWeatherData();
+                
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> עודכן';
+                document.getElementById('sync-status').innerText = 'עודכן: ' + appState.lastSync;
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fa-brands fa-google text-[10px]"></i> התחבר';
+                }, 3000);
+            }, 1500);
+        }
+
+        function initPackingState() {
+            if (Object.keys(appState.packingState).length === 0 && appState.data && appState.data.packingList) {
+                appState.data.packingList.forEach(item => {
+                    appState.packingState[item.id] = false;
+                });
             }
         }
 
         async function fetchWeatherData() {
             try {
-                // משיכת נתונים עבור לונדון דרך Open-Meteo API חינמי
                 const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=51.5085&longitude=-0.1257&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto');
                 const data = await response.json();
                 appState.weatherData = data;
+                saveState();
+                renderWeather();
             } catch (error) {
                 console.error('Failed to fetch weather', error);
-                // לא להכשיל את הסנכרון, אלא להשתמש בנתונים ישנים אם יש
             }
         }
 
@@ -388,35 +586,35 @@
             return {
                 logistics: {
                     flightOut: { airline: 'El Al (LY 315)', date: '15/10/2026', time: '10:00', from: 'נתב"ג (TLV)', to: 'היתרו (LHR)', term: 'טרמינל 3' },
-                    hotel: { name: 'Royal National Hotel', address: '38-51 Bedford Way, London', checkIn: '15/10/2026 14:00', checkOut: '20/10/2026 11:00' },
+                    hotel: { name: 'Royal National Hotel', address: '38-51 Bedford Way, London', checkIn: '15/10 14:00', checkOut: '20/10 11:00' },
                     transport: [
-                        { type: 'רכבת', details: 'רכבת אקספרס מהיתרו ללונדון', time: '14:30', date: '15/10/2026' },
-                        { type: 'מעבורת', details: 'שייט על נהר התמזה לגריניץ\'', time: '10:00', date: '17/10/2026' }
+                        { type: 'רכבת', details: 'אקספרס היתרו', time: '14:30', date: '15/10/2026', icon: 'fa-train' },
+                        { type: 'מעבורת', details: 'שייט על התמזה', time: '10:00', date: '17/10/2026', icon: 'fa-ship' }
                     ]
                 },
                 itinerary: [
-                    { day: 'יום חמישי, 15/10', events: [{ time: '10:00', desc: 'טיסה ללונדון' }, { time: '14:00', desc: 'הגעה למלון והתארגנות' }, { time: '18:00', desc: 'ארוחת ערב ליד המלון' }] },
-                    { day: 'יום שישי, 16/10', events: [{ time: '09:00', desc: 'ארוחת בוקר' }, { time: '10:30', desc: 'סיור באוטובוס תיירים' }, { time: '16:00', desc: 'תה מנחה מסורתי' }] },
-                    { day: 'יום שבת, 17/10', events: [{ time: '10:00', desc: 'שייט על נהר התמזה' }, { time: '13:00', desc: 'שוק בורו (Borough Market)' }] }
+                    { day: 'יום חמישי, 15/10', events: [{ time: '10:00', desc: 'טיסה ללונדון' }, { time: '14:00', desc: 'הגעה למלון והתארגנות' }] },
+                    { day: 'יום שישי, 16/10', events: [{ time: '09:00', desc: 'ארוחת בוקר' }, { time: '10:30', desc: 'סיור באוטובוס תיירים' }] }
                 ],
                 attractions: [
-                    { name: 'גלגל הענק (London Eye)', type: 'הוזמן מראש (מייל)', time: '16/10 12:00', address: 'Riverside Building, County Hall', preloaded: false },
-                    { name: 'מוזיאון הבריטי', type: 'המלצת AI מבוססת מיקום', time: 'פתוח 10:00-17:00', address: 'Great Russell St, London', preloaded: true, note: 'נגיש מאוד, יש מעליות, כניסה חינם. מרחק הליכה קצר מהמלון.' },
-                    { name: 'גני קיו (Kew Gardens)', type: 'המלצת AI', time: 'מומלץ בשעות הבוקר', address: 'Richmond, London', preloaded: true, note: 'מקום שקט ופסטורלי, מתאים להליכה מתונה. יש רכבת פנימית לגיל הזהב.' }
+                    { name: 'המוזיאון הבריטי', type: 'המלצת AI', time: '10:00-17:00', address: 'Great Russell St, London', preloaded: true, note: 'נגיש מאוד, יש מעליות. כניסה חינם.' },
+                    { name: 'גני קיו (Kew Gardens)', type: 'המלצת AI', time: 'מומלץ בבוקר', address: 'Richmond, London', preloaded: true, note: 'שקט ופסטורלי, מתאים להליכה מתונה.' }
                 ],
                 restaurants: [
-                    { name: 'The Ivy', type: 'הוזמן מראש (יומן)', time: '15/10 19:30', address: '1-5 West St, London', preloaded: false },
-                    { name: 'Caffè Nero', type: 'המלצת AI', time: 'בית קפה קרוב', address: 'Russell Square, London', preloaded: true, note: 'מקום שקט ונעים לעצירה וקפה, 2 דקות הליכה מהמלון שלכם.' }
+                    { name: 'The Ivy', type: 'הוזמן (יומן)', time: '15/10 19:30', address: '1-5 West St, London', preloaded: false, note: 'מסעדה יוקרתית.' },
+                    { name: 'Caffè Nero', type: 'המלצת AI', time: 'בית קפה קרוב', address: 'Russell Square', preloaded: true, note: 'קפה שקט, 2 דקות מהמלון.' }
                 ],
                 packingList: [
-                    { id: 'p1', text: 'דרכונים בתוקף', category: 'מסמכים חשובים' },
-                    { id: 'p2', text: 'תרופות מרשם קבועות (ל-10 ימים)', category: 'בריאות' },
-                    { id: 'p3', text: 'משקפי קריאה / ראייה', category: 'בריאות' },
-                    { id: 'p4', text: 'נעלי הליכה נוחות', category: 'לבוש' },
-                    { id: 'p5', text: 'מעיל קל / מטרייה (המלצת AI - צפוי גשם קל)', category: 'לבוש' }
+                    { id: 'p1', text: 'דרכונים בתוקף', category: 'מסמכים' },
+                    { id: 'p2', text: 'תרופות מרשם קבועות', category: 'בריאות' },
+                    { id: 'p3', text: 'נעלי הליכה נוחות', category: 'לבוש' }
                 ],
-                insurance: { company: 'הראל חברה לביטוח', policy: 'POL-123456789', phone: '+972-3-1234567' }
+                insurance: { company: 'הראל ביטוח', policy: 'POL-123456', phone: '+972-3-1234567' }
             };
+        }
+
+        function getGoogleMapsLink(query) {
+            return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
         }
 
         function renderAllData() {
@@ -430,118 +628,143 @@
             renderWeather();
         }
 
-        function getGoogleMapsLink(query) {
-            return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-        }
-
-        // אזור היעדים
-        function addDestination() {
-            const dest = prompt("הזן את שם היעד (למשל: עיר או מדינה):");
-            if (dest && dest.trim() !== "") {
-                appState.destinations.push(dest.trim());
+        function addDestinationUI() {
+            showPrompt('הוסף יעד לטיול', 'לדוגמה: פריז, צרפת', (dest) => {
+                appState.destinations.push(dest);
                 saveState();
                 renderDestinations();
-            }
+                showToast('היעד התווסף בהצלחה', 'success');
+            });
         }
 
         function renderDestinations() {
             const container = document.getElementById('destinations-container');
-            const noMsg = document.getElementById('no-destinations-msg');
-            
             if (appState.destinations.length > 0) {
-                if (noMsg) noMsg.style.display = 'none';
                 container.innerHTML = appState.destinations.map((dest, index) => `
-                    <div class="flex justify-between items-center bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                        <span class="text-xl font-bold text-indigo-900"><i class="fas fa-map-marker-alt text-indigo-400 ml-2"></i> ${dest}</span>
-                        <button onclick="removeDestination(${index})" class="text-red-500 p-2"><i class="fas fa-trash-alt"></i></button>
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-lg font-bold text-slate-700">${dest}</span>
+                        <button onclick="removeDestUI(${index})" class="text-slate-400 hover:text-red-500 w-8 h-8 flex items-center justify-center rounded-full transition-colors"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 `).join('');
             } else {
-                container.innerHTML = `<p class="text-gray-500 text-lg text-center p-3" id="no-destinations-msg">אין יעדים מוגדרים כרגע.</p>`;
+                container.innerHTML = `<p class="text-slate-400 text-center py-4">אין יעדים. לחץ על כפתור ההוספה.</p>`;
             }
         }
 
-        function removeDestination(index) {
-            if (confirm("האם למחוק יעד זה?")) {
+        function removeDestUI(index) {
+            showConfirm('מחיקת יעד', 'האם אתה בטוח שברצונך למחוק יעד זה?', () => {
                 appState.destinations.splice(index, 1);
                 saveState();
                 renderDestinations();
-            }
+                showToast('היעד נמחק', 'info');
+            });
         }
 
         function renderLogistics() {
             const l = appState.data.logistics;
             document.getElementById('logistics-content').innerHTML = `
-                <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-blue-100">
-                    <h3 class="text-2xl font-bold text-blue-800 mb-4"><i class="fas fa-plane"></i> פרטי טיסה</h3>
-                    <p class="text-lg"><strong>חברת תעופה:</strong> ${l.flightOut.airline}</p>
-                    <p class="text-lg"><strong>תאריך ושעה:</strong> ${l.flightOut.date} | ${l.flightOut.time}</p>
-                    <p class="text-lg"><strong>מסלול:</strong> ${l.flightOut.from} <i class="fas fa-arrow-left mx-2"></i> ${l.flightOut.to}</p>
-                </div>
-                <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-indigo-100">
-                    <h3 class="text-2xl font-bold text-indigo-800 mb-4"><i class="fas fa-hotel"></i> מלון</h3>
-                    <p class="text-lg font-bold">${l.hotel.name}</p>
-                    <p class="text-lg text-gray-700">${l.hotel.address}</p>
-                    <div class="grid grid-cols-2 gap-4 mt-4">
-                        <div class="bg-indigo-50 p-2 rounded-lg text-center"><p class="text-sm text-gray-500">צ'ק אין</p><p class="font-bold text-lg">${l.hotel.checkIn}</p></div>
-                        <div class="bg-indigo-50 p-2 rounded-lg text-center"><p class="text-sm text-gray-500">צ'ק אאוט</p><p class="font-bold text-lg">${l.hotel.checkOut}</p></div>
+                <!-- טיסה -->
+                <div class="bg-white p-6 rounded-[2rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-lg"><i class="fas fa-plane"></i></div>
+                        <h3 class="text-xl font-extrabold text-slate-800">פרטי טיסה</h3>
                     </div>
-                    <a href="${getGoogleMapsLink(l.hotel.name + ' ' + l.hotel.address)}" target="_blank" class="mt-4 block w-full text-center bg-green-500 text-white py-3 rounded-xl font-bold text-xl shadow-md">
-                        <i class="fas fa-map-marker-alt"></i> נווט למלון במפה
+                    <div class="space-y-2">
+                        <p class="text-slate-600 font-medium">${l.flightOut.airline}</p>
+                        <p class="text-slate-600">${l.flightOut.date} בשעה <span class="font-bold text-slate-800">${l.flightOut.time}</span></p>
+                        <div class="flex items-center justify-between bg-slate-50 p-4 rounded-2xl mt-3">
+                            <span class="font-bold text-slate-700">${l.flightOut.from}</span>
+                            <i class="fas fa-arrow-left text-slate-300"></i>
+                            <span class="font-bold text-slate-700">${l.flightOut.to}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- מלון -->
+                <div class="bg-white p-6 rounded-[2rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg"><i class="fas fa-hotel"></i></div>
+                        <h3 class="text-xl font-extrabold text-slate-800">המלון שלנו</h3>
+                    </div>
+                    <p class="text-lg font-extrabold text-slate-800">${l.hotel.name}</p>
+                    <p class="text-slate-500 mb-4 text-sm">${l.hotel.address}</p>
+                    
+                    <div class="flex gap-3 mb-5">
+                        <div class="flex-1 bg-slate-50 p-3 rounded-2xl text-center">
+                            <p class="text-xs text-slate-400 font-bold mb-1">צ'ק-אין</p>
+                            <p class="font-bold text-slate-700">${l.hotel.checkIn}</p>
+                        </div>
+                        <div class="flex-1 bg-slate-50 p-3 rounded-2xl text-center">
+                            <p class="text-xs text-slate-400 font-bold mb-1">צ'ק-אאוט</p>
+                            <p class="font-bold text-slate-700">${l.hotel.checkOut}</p>
+                        </div>
+                    </div>
+                    
+                    <a href="${getGoogleMapsLink(l.hotel.name + ' ' + l.hotel.address)}" target="_blank" class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-bold transition shadow-lg shadow-indigo-200">
+                        <i class="fas fa-location-arrow ml-2"></i> נווט למלון במפות
                     </a>
                 </div>
-                <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-cyan-100">
-                    <h3 class="text-2xl font-bold text-cyan-800 mb-4"><i class="fas fa-bus"></i> תחבורה ומעבורות</h3>
-                    ${l.transport.map(t => `
-                        <div class="border-b border-gray-200 pb-3 mb-3 last:border-0">
-                            <p class="text-lg font-bold"><i class="fas ${t.type === 'מעבורת' ? 'fa-ship' : 'fa-train'} text-cyan-600 ml-1"></i> ${t.type}: ${t.details}</p>
-                            <p class="text-gray-600 text-lg">${t.date} בשעה ${t.time}</p>
-                        </div>
-                    `).join('')}
+
+                <!-- תחבורה -->
+                <div class="bg-white p-6 rounded-[2rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center text-lg"><i class="fas fa-train"></i></div>
+                        <h3 class="text-xl font-extrabold text-slate-800">תחבורה שנסגרה</h3>
+                    </div>
+                    <div class="space-y-4">
+                        ${l.transport.map(t => `
+                            <div class="flex gap-4 items-center bg-slate-50 p-4 rounded-2xl">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-400 shadow-sm"><i class="fas ${t.icon || 'fa-bus'}"></i></div>
+                                <div>
+                                    <p class="font-bold text-slate-700">${t.details}</p>
+                                    <p class="text-sm text-slate-500">${t.date} | ${t.time}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
             `;
         }
 
         function renderWeather() {
             const container = document.getElementById('weather-content');
-            if (!appState.weatherData || !appState.weatherData.current_weather) {
-                container.innerHTML = '<p class="text-center text-xl text-gray-500 my-10">אין נתוני מזג אוויר עדכניים.</p>';
-                return;
-            }
+            if (!appState.weatherData || !appState.weatherData.current_weather) return;
 
             const current = appState.weatherData.current_weather;
             const daily = appState.weatherData.daily;
             
-            let tip = "מזג אוויר רגיל, התלבשו בשכבות.";
-            if (current.temperature < 15) tip = "קר בחוץ! מומלץ לקחת מעיל חם וכובע.";
-            if (current.temperature > 25) tip = "חם בחוץ! הקפידו לשתות מים ולחבוש כובע שמש.";
-            if (current.weathercode >= 60) tip = "צפוי גשם! זכרו לקחת מטרייה.";
+            let tip = "מזג אוויר נוח. התלבשו בשכבות.";
+            if (current.temperature < 15) tip = "קריר! כדאי לקחת מעיל ומטרייה.";
+            if (current.temperature > 25) tip = "חם בחוץ! הקפידו על כובע ושתייה.";
 
             let forecastHtml = '';
             for (let i = 0; i < 3; i++) {
                 const date = new Date(daily.time[i]);
-                const dayName = date.toLocaleDateString('he-IL', { weekday: 'long' });
+                const dayName = i === 0 ? 'היום' : date.toLocaleDateString('he-IL', { weekday: 'long' });
                 forecastHtml += `
-                    <div class="flex justify-between items-center p-3 border-b border-sky-100 last:border-0">
-                        <span class="text-lg font-bold w-24">${i===0 ? 'היום' : dayName}</span>
-                        <span class="text-sky-700 text-lg"><i class="fas fa-temperature-low"></i> ${Math.round(daily.temperature_2m_min[i])}°C</span>
-                        <span class="text-orange-600 text-lg font-bold"><i class="fas fa-temperature-high"></i> ${Math.round(daily.temperature_2m_max[i])}°C</span>
+                    <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl">
+                        <span class="font-bold text-slate-700 w-24">${dayName}</span>
+                        <div class="flex items-center gap-4">
+                            <span class="text-slate-400 font-medium">${Math.round(daily.temperature_2m_min[i])}°</span>
+                            <span class="text-slate-800 font-extrabold text-lg">${Math.round(daily.temperature_2m_max[i])}°</span>
+                        </div>
                     </div>
                 `;
             }
 
             container.innerHTML = `
-                <div class="bg-gradient-to-b from-sky-300 to-sky-100 p-6 rounded-2xl shadow-md text-center mb-6">
-                    <h3 class="text-2xl font-bold text-sky-900 mb-2">לונדון עכשיו</h3>
-                    <div class="text-6xl font-bold text-sky-900 mb-4" style="direction: ltr;">${current.temperature}°C</div>
-                    <div class="bg-white/60 p-4 rounded-xl text-sky-900 font-semibold text-lg inline-block">
-                        <i class="fas fa-info-circle"></i> טיפ לבוש: ${tip}
+                <div class="bg-gradient-to-br from-sky-400 to-blue-500 p-8 rounded-[2rem] shadow-lg shadow-sky-200 text-center mb-6 text-white relative overflow-hidden">
+                    <i class="fas fa-cloud absolute -left-4 -top-4 text-7xl opacity-20"></i>
+                    <h3 class="text-xl font-bold mb-2 opacity-90">הטמפרטורה ביעד עכשיו</h3>
+                    <div class="text-7xl font-extrabold mb-6 tracking-tighter" style="direction: ltr;">${current.temperature}°</div>
+                    <div class="bg-white/20 backdrop-blur-md py-3 px-5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-lightbulb"></i> ${tip}
                     </div>
                 </div>
                 
-                <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-sky-100">
-                    <h3 class="text-2xl font-bold text-sky-800 mb-4"><i class="fas fa-calendar-day"></i> תחזית קרובה</h3>
-                    ${forecastHtml}
+                <div class="bg-white p-6 rounded-[2rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+                    <h3 class="text-xl font-extrabold text-slate-800 mb-4">תחזית לימים הקרובים</h3>
+                    <div class="space-y-3">${forecastHtml}</div>
                 </div>
             `;
         }
@@ -549,98 +772,103 @@
         function renderItinerary() {
             const container = document.getElementById('itinerary-content');
             container.innerHTML = appState.data.itinerary.map(day => `
-                <div class="bg-white p-4 rounded-2xl shadow-md mb-4 border-r-4 border-green-500">
-                    <h3 class="text-2xl font-bold text-green-800 mb-3">${day.day}</h3>
-                    <ul class="space-y-3">
+                <div class="bg-white p-6 rounded-[2rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 mb-5 relative overflow-hidden">
+                    <div class="w-2 absolute right-0 top-0 bottom-0 bg-purple-500 rounded-r-[2rem]"></div>
+                    <h3 class="text-xl font-extrabold text-slate-800 mb-5 pl-2">${day.day}</h3>
+                    <div class="space-y-4">
                         ${day.events.map(ev => `
-                            <li class="flex items-start">
-                                <span class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-lg text-lg min-w-[70px] text-center ml-3">${ev.time}</span>
-                                <span class="text-lg text-gray-800 pt-1">${ev.desc}</span>
-                            </li>
+                            <div class="flex gap-4">
+                                <div class="w-16 flex-shrink-0 text-left">
+                                    <span class="bg-slate-100 text-slate-600 font-bold px-2 py-1 rounded-lg text-sm block text-center">${ev.time}</span>
+                                </div>
+                                <div class="pt-0.5">
+                                    <p class="font-bold text-slate-800 text-lg leading-tight">${ev.desc}</p>
+                                    ${ev.location ? `<p class="text-slate-500 text-sm mt-1"><i class="fas fa-map-marker-alt"></i> ${ev.location}</p>` : ''}
+                                </div>
+                            </div>
                         `).join('')}
-                    </ul>
+                    </div>
                 </div>
             `).join('');
         }
 
         function renderAttractions() {
-            const container = document.getElementById('attractions-content');
-            container.innerHTML = appState.data.attractions.map(item => `
-                <div class="bg-white p-5 rounded-2xl shadow-md mb-4 border-2 ${item.preloaded ? 'border-purple-200 bg-purple-50' : 'border-gray-200'}">
-                    ${item.preloaded ? '<span class="bg-purple-200 text-purple-800 text-sm font-bold px-2 py-1 rounded mb-2 inline-block"><i class="fas fa-robot"></i> הומלץ ע"י העוזר</span>' : ''}
-                    <h3 class="text-2xl font-bold text-gray-800 mb-2">${item.name}</h3>
-                    <p class="text-lg text-gray-600 mb-1"><i class="far fa-clock"></i> ${item.time}</p>
-                    <p class="text-lg text-gray-600"><i class="fas fa-map-marker-alt"></i> ${item.address}</p>
-                    ${item.note ? `<div class="mt-3 p-3 bg-white rounded-lg border border-purple-100"><p class="text-base text-gray-700"><strong><i class="fas fa-comment-dots text-purple-500"></i> הערת נגישות:</strong> ${item.note}</p></div>` : ''}
-                    <a href="${getGoogleMapsLink(item.name + ' ' + item.address)}" target="_blank" class="mt-4 block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 rounded-xl font-bold text-lg border border-gray-300">
-                        <i class="fas fa-directions text-blue-500"></i> נווט לאטרקציה
-                    </a>
-                </div>
-            `).join('');
+            document.getElementById('attractions-content').innerHTML = appState.data.attractions.map(item => createCard(item, 'orange')).join('');
         }
 
         function renderRestaurants() {
-            const container = document.getElementById('restaurants-content');
-            container.innerHTML = appState.data.restaurants.map(item => `
-                <div class="bg-white p-5 rounded-2xl shadow-md mb-4 border-2 ${item.preloaded ? 'border-orange-200 bg-orange-50' : 'border-gray-200'}">
-                    ${item.preloaded ? '<span class="bg-orange-200 text-orange-800 text-sm font-bold px-2 py-1 rounded mb-2 inline-block"><i class="fas fa-robot"></i> הומלץ ע"י העוזר</span>' : ''}
-                    <h3 class="text-2xl font-bold text-gray-800 mb-2">${item.name}</h3>
-                    <p class="text-lg text-gray-600 mb-1"><i class="far fa-clock"></i> ${item.time}</p>
-                    <p class="text-lg text-gray-600"><i class="fas fa-map-marker-alt"></i> ${item.address}</p>
-                    ${item.note ? `<div class="mt-3 p-3 bg-white rounded-lg border border-orange-100"><p class="text-base text-gray-700"><strong><i class="fas fa-info-circle text-orange-500"></i> מידע:</strong> ${item.note}</p></div>` : ''}
-                    <a href="${getGoogleMapsLink(item.name + ' ' + item.address)}" target="_blank" class="mt-4 block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 rounded-xl font-bold text-lg border border-gray-300">
-                        <i class="fas fa-directions text-blue-500"></i> נווט למסעדה
+            document.getElementById('restaurants-content').innerHTML = appState.data.restaurants.map(item => createCard(item, 'rose')).join('');
+        }
+
+        function createCard(item, color) {
+            const bgClass = item.preloaded ? 'bg-orange-50/50' : 'bg-white';
+            const badge = item.preloaded ? `<span class="bg-${color}-100 text-${color}-700 text-xs font-bold px-3 py-1 rounded-lg mb-3 inline-block">המלצת AI שמורה</span>` : '';
+            return `
+                <div class="${bgClass} p-6 rounded-[2rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 mb-5">
+                    ${badge}
+                    <h3 class="text-2xl font-extrabold text-slate-800 mb-2">${item.name}</h3>
+                    <div class="space-y-1 mb-4 text-slate-600 font-medium">
+                        <p><i class="far fa-clock w-5 text-center text-slate-400"></i> ${item.time}</p>
+                        <p><i class="fas fa-map-marker-alt w-5 text-center text-slate-400"></i> ${item.address}</p>
+                    </div>
+                    ${item.note ? `<div class="p-4 bg-white rounded-2xl border border-slate-100 text-sm text-slate-600 mb-4 shadow-sm">${item.note}</div>` : ''}
+                    <a href="${getGoogleMapsLink(item.name + ' ' + item.address)}" target="_blank" class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-white py-3.5 rounded-2xl font-bold transition shadow-md">
+                        ניווט ב-Maps
                     </a>
                 </div>
-            `).join('');
+            `;
         }
 
         function renderPackingList() {
             const container = document.getElementById('packing-content');
-            container.innerHTML = '<ul class="space-y-1">' + appState.data.packingList.map(item => `
-                <li class="flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+            container.innerHTML = '<div class="space-y-2">' + appState.data.packingList.map(item => `
+                <div class="flex items-center p-3 hover:bg-slate-50 rounded-2xl transition-colors">
                     <input type="checkbox" id="chk_${item.id}" 
                         ${appState.packingState[item.id] ? 'checked' : ''}
                         onchange="togglePackingItem('${item.id}', this.checked)"
-                        class="ml-4 rounded text-teal-600 focus:ring-teal-500 form-checkbox h-8 w-8">
-                    <label for="chk_${item.id}" class="text-xl flex-1 select-none ${appState.packingState[item.id] ? 'line-through text-gray-400' : 'text-gray-800'}">
-                        ${item.text}
-                        <span class="block text-sm text-gray-400 mt-1">${item.category || ''}</span>
+                        class="ml-4 rounded-xl text-emerald-500 bg-slate-100 border-slate-300 w-7 h-7">
+                    <label for="chk_${item.id}" class="flex-1 select-none flex flex-col justify-center cursor-pointer">
+                        <span class="text-lg font-bold ${appState.packingState[item.id] ? 'line-through text-slate-300' : 'text-slate-700'} transition-all">${item.text}</span>
+                        <span class="text-xs text-slate-400 font-medium">${item.category || ''}</span>
                     </label>
-                </li>
-            `).join('') + '</ul>';
+                </div>
+            `).join('') + '</div>';
         }
 
         function togglePackingItem(id, isChecked) {
             appState.packingState[id] = isChecked;
             saveState();
-            renderPackingList(); // רענון כדי להפעיל את הקו החוצה (line-through)
+            renderPackingList();
         }
 
-        function addCustomItem() {
-            const text = prompt("הכנס פריט חדש לאריזה:");
-            if (text && text.trim() !== "") {
+        function addCustomItemUI() {
+            showPrompt('הוספת פריט אריזה', 'לדוגמה: מטען נייד', (text) => {
                 const newItemId = 'custom_' + Date.now();
-                appState.data.packingList.push({ id: newItemId, text: text, category: 'פריט אישי' });
+                appState.data.packingList.push({ id: newItemId, text: text, category: 'אישי' });
                 appState.packingState[newItemId] = false;
                 saveState();
                 renderPackingList();
-            }
+                showToast('הפריט התווסף', 'success');
+            });
         }
 
         function renderEmergency() {
-            const container = document.getElementById('insurance-content');
             const ins = appState.data.insurance;
-            container.innerHTML = `
-                <p class="text-xl mb-2"><strong>חברה:</strong> ${ins.company}</p>
-                <p class="text-xl mb-4"><strong>מספר פוליסה:</strong> <span class="bg-gray-100 px-2 py-1 rounded tracking-wider font-mono">${ins.policy}</span></p>
-                <a href="tel:${ins.phone.replace(/-/g, '')}" class="block w-full text-center bg-blue-100 text-blue-800 py-3 rounded-xl font-bold text-xl border border-blue-300">
-                    <i class="fas fa-headset"></i> חיוג למוקד ביטוח (${ins.phone})
+            document.getElementById('insurance-content').innerHTML = `
+                <div class="bg-slate-50 p-4 rounded-2xl mb-4">
+                    <p class="text-sm text-slate-500 font-bold mb-1">שם החברה</p>
+                    <p class="text-xl font-extrabold text-slate-800">${ins.company}</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-2xl mb-6">
+                    <p class="text-sm text-slate-500 font-bold mb-1">מספר פוליסה</p>
+                    <p class="text-xl font-mono font-bold text-slate-800 tracking-wider">${ins.policy}</p>
+                </div>
+                <a href="tel:${ins.phone.replace(/-/g, '')}" class="block w-full text-center bg-slate-900 text-white py-4 rounded-2xl font-bold text-lg shadow-md">
+                    <i class="fas fa-headset ml-2"></i> חייג לחברת הביטוח
                 </a>
             `;
         }
 
-        // אתחול האפליקציה בטעינת העמוד
         window.onload = initApp;
 
     </script>
